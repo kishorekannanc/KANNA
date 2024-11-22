@@ -3,12 +3,12 @@ pipeline {
     stages {
         stage('Docker Build') {
             steps {
-                sh 'sh docker-build.sh'
+                sh './build.sh'
             }
         }
         stage('Deploy Env') {
             steps {
-                sh 'sh docker-deploy.sh'
+                sh './deploy.sh'
             }
         }
     }
