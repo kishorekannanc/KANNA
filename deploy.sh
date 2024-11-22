@@ -1,5 +1,10 @@
 #!/bin/bash
-# Run Docker Container
-echo "Running Docker Container..."
-docker rm -f react-app || true
-docker run -d --name react-app -p 80:80 $registry:$BUILD_NUMBER
+
+version=production
+env="production"
+
+if sudo docker ps -a --format '{{.Names}}' | grep "${env}"
+then
+sudo docker stop ${env} && sudo docker rm ${env}
+fi
+sudo docker run -it -d -p 80:80 --name ${env} learnitguide/busapp:${version}
