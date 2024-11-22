@@ -1,27 +1,28 @@
 pipeline {
     environment {
         registry = "kishorekannan23/dev"
-        registryCredential = 'docker-hub-credentials' // Replace with your Jenkins credentials ID
+        registryCredential = 'docker-hub-credentials'
+        dockerImage = ''
     }
     agent any
     stages {
-        stage('Building Docker Image') {
-            steps {
-                sh './build.sh'
-            }
-        }
-        stage('Pushing Image to Docker Hub') {
+        stage('Build Docker Image') {
             steps {
                 script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-                        // Push the image with BUILD_NUMBER tag
-                        sh "docker tag ${registry}:${env.BUILD_NUMBER} ${registry}:dev"
-                        sh "docker push ${registry}:${env.BUILD_NUMBER}"
-                        sh "docker push ${registry}:dev"
+                    echo 'Building Docker Image...'
+                    dockerImage = docker.build("${registry}:${BUILD_NUMBER}")
+                }
+            }
+        }
+        stage('Push Image to Docker Hub') {
+            steps {
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', registryCredential) {
+                        dockerImage.push("${env.BUILD_NUMBER}")
+                        dockerImage.push("latest")
                     }
                 }
             }
         }
     }
 }
-
