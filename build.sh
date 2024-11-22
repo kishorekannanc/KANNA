@@ -1,4 +1,6 @@
 #!/bin/bash
-# Build Docker Image
-echo "Building Docker Image..."
-docker build -t $registry:$BUILD_NUMBER .
+
+version=development
+
+sudo docker build -t learnitguide/busapp:${version} .
+sudo docker push learnitguide/busapp:${version}
