@@ -1,27 +1,14 @@
 pipeline {
-    environment {
-        registry = "kishorekannan23/dev"
-        registryCredential = 'docker-hub-credentials'
-        dockerImage = ''
-    }
     agent any
     stages {
-        stage('Build Docker Image') {
+        stage('Docker Build') {
             steps {
-                script {
-                    echo 'Building Docker Image...'
-                    dockerImage = docker.build("${registry}:${BUILD_NUMBER}")
-                }
+                sh 'sh docker-build.sh'
             }
         }
-        stage('Push Image to Docker Hub') {
+        stage('Deploy Env') {
             steps {
-                script {
-                    docker.withRegistry('https://registry.hub.docker.com', registryCredential) {
-                        dockerImage.push("${env.BUILD_NUMBER}")
-                        dockerImage.push("latest")
-                    }
-                }
+                sh 'sh docker-deploy.sh'
             }
         }
     }
